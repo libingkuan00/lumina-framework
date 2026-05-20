@@ -1,0 +1,35 @@
+Lumina Framework 上线前高并发模拟需求
+
+目标
+- 在不依赖真实大模型、Redis、Elasticsearch、MySQL、Kafka 的情况下，先验证 HTTP/SSE 层、异步线程池和 Singleflight 去重逻辑的并发表现。
+- 为后续接入真实 LuminaRagClient 压测保留入口，逐步替换模拟响应为真实 RAG 链路。
+
+当前已具备
+- 独立压测启动类：com.lumina.docs.loadtest.LuminaLoadTestApplication
+- 模拟数据接口：POST /api/loadtest/seed
+- SSE 压测接口：POST /api/loadtest/chat/stream
+- 统计接口：GET /api/loadtest/stats
+- k6 脚本：loadtest/k6/lumina-chat-stream.js
+
+启动方式
+mvn -pl lumina-docs-app -am spring-boot:run "-Dspring-boot.run.main-class=com.lumina.docs.loadtest.LuminaLoadTestApplication" "-Dspring-boot.run.profiles=loadtest"
+
+初始化模拟数据
+curl -X POST "http://localhost:8080/api/loadtest/seed?documents=5000&paragraphs=6"
+
+单次 SSE 验证
+curl -N -X POST "http://localhost:8080/api/loadtest/chat/stream" -H "Content-Type: application/json" -d "{\"query\":\"How does Lumina handle high concurrency?\",\"sessionId\":\"s1\",\"dedupeKey\":\"same-question-hot-key\"}"
+
+k6 压测
+k6 run loadtest/k6/lumina-chat-stream.js
+
+建议验收指标
+- http_req_failed < 1%
+- p95 响应时间 < 3000ms
+- SSE 响应体包含 [DONE]
+- 相同 dedupeKey 的并发请求应复用计算结果，/api/loadtest/stats 中 realGenerationCount 增长应明显低于总请求数。
+
+下一步
+- 增加真实 RAG 链路压测 profile。
+- 输出 p95、p99、错误率、Singleflight 命中率报告。
+- 将 loadtest/results 和 loadtest/reports 作为压测产物目录，不提交 Git。

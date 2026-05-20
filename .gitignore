@@ -1,9 +1,23 @@
+# Build output
 target/
+out/
+bin/
+*.class
+*.jar
+*.war
+*.ear
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Maven local/runtime files
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.properties
+
 ### IntelliJ IDEA ###
+.idea/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
@@ -34,8 +48,43 @@ build/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
+### OS files ###
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+logs/
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# Runtime data
+*.pid
+*.hprof
+heapdump*.phd
+hs_err_pid*
+replay_pid*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.yaml
+application-local.properties
 
 # Sensitive configuration file
 lumina-docs-app/src/main/resources/application.yml
+lumina-docs-app/src/main/resources/application-*.local.yml
+lumina-docs-app/src/main/resources/application-*.local.yaml
+lumina-docs-app/src/main/resources/application-*.local.properties
+
+# Load-test reports
+loadtest/results/
+loadtest/reports/
+summary.json
+k6-summary.json
