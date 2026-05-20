@@ -1,0 +1,12 @@
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 300
+      min-spare: 30
+    accept-count: 1000
+
+logging:
+  level:
+    root: INFO
+    com.lumina: INFO
